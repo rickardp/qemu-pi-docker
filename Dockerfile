@@ -21,9 +21,10 @@ RUN mkdir /build; \
     tar -C /build --strip-components=1 -xf /build/qemu.tar.xz; \
     rm -f /build/qemu.tar.xz
 WORKDIR /build
-RUN ./configure --target-list=aarch64-softmmu,aarch64-linux-user --disable-kvm 
+RUN ./configure --static --target-list=aarch64-linux-user --disable-kvm 
 RUN make -j2 && make install
-
+RUN ./configure --target-list=aarch64-softmmu --disable-kvm 
+RUN make -j2 && make install
 FROM base AS runtime
 RUN apt-get update && apt-get install --no-install-recommends -y \
 		libglib2.0-bin \
