@@ -21,13 +21,16 @@ RUN mkdir /build; \
     tar -C /build --strip-components=1 -xf /build/qemu.tar.xz; \
     rm -f /build/qemu.tar.xz
 WORKDIR /build
+FROM build as build-static
 RUN ./configure --static --target-list=aarch64-linux-user --disable-kvm 
 RUN make -j2 && make install
-RUN ./configure --target-list=aarch64-softmmu --disable-kvm 
+FROM build as build-dynamic
+RUN ./configure --target-list=aarch64-linux-user,aarch64-softmmu --disable-kvm 
 RUN make -j2 && make install
 FROM base AS runtime
 RUN apt-get update && apt-get install --no-install-recommends -y \
 		libglib2.0-bin \
 	&& rm -rf /var/lib/apt/lists/*
 COPY --from=build /usr/local /usr/local
+COPY --from=build-static /usr/local/qemu-aarch64 /usr/local/qemu-aarch64-static
 
