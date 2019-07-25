@@ -32,5 +32,5 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 		libglib2.0-bin \
 	&& rm -rf /var/lib/apt/lists/*
 COPY --from=build /usr/local /usr/local
-COPY --from=build-static /usr/local/qemu-aarch64 /usr/local/qemu-aarch64-static
+COPY --from=build-static /usr/local/bin/qemu-aarch64 /usr/local/bin/qemu-aarch64-static
 
